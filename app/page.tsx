@@ -16,6 +16,8 @@ import { AgentCard } from "@/components/AgentCard";
 import { WorkflowGraph } from "@/components/WorkflowGraph";
 import { ChatThread } from "@/components/ChatThread";
 import { BuildLog } from "@/components/BuildLog";
+import { BuildMetrics } from "@/components/BuildMetrics";
+import { computeMetrics } from "@/lib/metrics";
 
 const SAMPLE_ID = "6a20c9a8763409aa5f09ae5a";
 
@@ -161,6 +163,7 @@ function Report({ res }: { res: AppStateResponse }) {
   const reqs = state.requirementsMessages ?? [];
   const planning = state.myraChatMessages ?? [];
   const agents = state.agents ?? [];
+  const metrics = computeMetrics(state);
 
   let n = 0;
   const idx = () => String(++n).padStart(2, "0");
@@ -250,6 +253,10 @@ function Report({ res }: { res: AppStateResponse }) {
 
       {/* Sections */}
       <div className="mt-4 space-y-2">
+        <Section id="metrics" index={idx()} title="Build Analytics">
+          <BuildMetrics m={metrics} />
+        </Section>
+
         {state.prdContent && (
           <Section id="prd" index={idx()} title="Product Requirements">
             <Markdown>{state.prdContent}</Markdown>
