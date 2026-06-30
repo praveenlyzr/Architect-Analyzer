@@ -13,6 +13,19 @@ dossier:
 
 Built with Next.js (App Router) and deployed on AWS Amplify.
 
+## Access (password protected)
+
+The live site is gated with AWS Amplify basic auth. This README is private, but
+the deployed app is public, so the credentials are noted here for the team:
+
+- **URL:** https://main.d26f6eu9be3g1n.amplifyapp.com/
+- **Username:** `admin`
+- **Password:** `architectroxx`
+
+Basic auth is configured at the Amplify app + branch level (not in code). To
+change or rotate it: _Amplify console → App settings → Access control_, or via
+CLI with `aws amplify update-branch --enable-basic-auth --basic-auth-credentials <base64(user:pass)>`.
+
 ## Security: the Memberstack token never reaches the browser
 
 The Architect API requires a Memberstack bearer token. That token is **only**
