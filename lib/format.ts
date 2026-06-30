@@ -64,6 +64,29 @@ export function uniqueModels(state: AppState): string[] {
   return [...set];
 }
 
+/**
+ * Architect pipes the gathered requirements forward into the PRD-planning
+ * prompt by re-quoting the original request and the requirements agent's
+ * questions, then appending the user's new answers. This strips that duplicated
+ * context so the planning thread only shows what's actually new (the decisions),
+ * which already appears in the Requirements Gathering section.
+ */
+export function stripPlanningContext(content: string): {
+  body: string;
+  hadContext: boolean;
+} {
+  if (!/^\s*based on the gathered requirements/i.test(content)) {
+    return { body: content, hadContext: false };
+  }
+  // The first horizontal divider separates the quoted context from the new
+  // "Selected" answers.
+  const m = content.match(/\n\s*-{3,}\s*\n/);
+  if (!m || m.index === undefined) return { body: content, hadContext: false };
+  const after = content.slice(m.index + m[0].length).trim();
+  if (!after) return { body: content, hadContext: false };
+  return { body: after, hadContext: true };
+}
+
 export function statusTone(status?: string): "green" | "amber" | "dim" {
   if (!status) return "dim";
   const s = status.toLowerCase();

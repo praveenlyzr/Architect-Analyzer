@@ -13,18 +13,29 @@ dossier:
 
 Built with Next.js (App Router) and deployed on AWS Amplify.
 
-## Access (password protected)
+## Access (password protected, 8-hour sessions)
 
-The live site is gated with AWS Amplify basic auth. This README is private, but
-the deployed app is public, so the credentials are noted here for the team:
+The live site is gated by an app-level login. This README is private, but the
+deployed app is public, so the password is noted here for the team:
 
 - **URL:** https://main.d26f6eu9be3g1n.amplifyapp.com/
-- **Username:** `admin`
 - **Password:** `architectroxx`
 
-Basic auth is configured at the Amplify app + branch level (not in code). To
-change or rotate it: _Amplify console → App settings → Access control_, or via
-CLI with `aws amplify update-branch --enable-basic-auth --basic-auth-credentials <base64(user:pass)>`.
+A correct password sets a signed, HttpOnly session cookie that **expires after
+8 hours** (`SESSION_TTL_MS` in `lib/auth.ts`); after that you're prompted again.
+Next.js middleware (`middleware.ts`) enforces it on every route and API call.
+
+Why not Amplify basic auth? HTTP Basic credentials are cached by the browser
+with no expiry, so they can't satisfy the 8-hour requirement. This cookie-based
+scheme can. Two env vars drive it:
+
+| Variable      | Purpose                                                        |
+| ------------- | -------------------------------------------------------------- |
+| `APP_PASSWORD` | The login password (`architectroxx`)                          |
+| `AUTH_SECRET`  | Random secret used to HMAC-sign session tokens (rotating it logs everyone out) |
+
+To change the password, update the `APP_PASSWORD` env var in the Amplify console
+(or via CLI) and redeploy.
 
 ## Security: the Memberstack token never reaches the browser
 

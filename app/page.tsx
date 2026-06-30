@@ -302,7 +302,7 @@ function Report({ res }: { res: AppStateResponse }) {
             count={planning.length}
             defaultOpen={false}
           >
-            <ChatThread messages={planning} />
+            <ChatThread messages={planning} stripContext />
           </Section>
         )}
 

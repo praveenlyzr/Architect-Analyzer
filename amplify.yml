@@ -11,7 +11,7 @@ frontend:
         # into .env.production so the compute runtime can read it at request
         # time. This file lives only inside the server bundle (never served to
         # the browser) and is git-ignored so it is never committed.
-        - env | grep -e MEMBERSTACK_TOKEN -e ARCHITECT_API_BASE >> .env.production || true
+        - env | grep -e MEMBERSTACK_TOKEN -e ARCHITECT_API_BASE -e APP_PASSWORD -e AUTH_SECRET >> .env.production || true
         - npm run build
   artifacts:
     baseDirectory: .next
