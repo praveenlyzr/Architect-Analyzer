@@ -212,18 +212,6 @@ function Report({ res }: { res: AppStateResponse }) {
               </a>
             </Field>
           )}
-          {state.sandbox_url && (
-            <Field label="Sandbox">
-              <a
-                href={state.sandbox_url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-cyan-bright hover:underline"
-              >
-                {state.sandbox_url.replace(/^https?:\/\//, "")} ↗
-              </a>
-            </Field>
-          )}
           {state.currentCommitId && (
             <Field label="Current Commit" mono>
               <span className="text-fg-muted">
@@ -337,7 +325,7 @@ function Report({ res }: { res: AppStateResponse }) {
           defaultOpen={false}
         >
           <pre className="max-h-[500px] overflow-auto rounded-xl border border-hairline bg-ink-2 p-4 font-mono text-xs leading-relaxed text-fg-muted">
-            {JSON.stringify(res, null, 2)}
+            {JSON.stringify(redactSandbox(res), null, 2)}
           </pre>
         </Section>
       </div>
@@ -347,6 +335,15 @@ function Report({ res }: { res: AppStateResponse }) {
       </footer>
     </div>
   );
+}
+
+/** Strip the sandbox URL from the raw dump so it stays hidden everywhere. */
+function redactSandbox(res: AppStateResponse): AppStateResponse {
+  const clone = JSON.parse(JSON.stringify(res)) as AppStateResponse;
+  if (clone.state && "sandbox_url" in clone.state) {
+    clone.state.sandbox_url = "[hidden]";
+  }
+  return clone;
 }
 
 function Stat({ value, label }: { value: number | string; label: string }) {
