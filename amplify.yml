@@ -6,9 +6,12 @@ frontend:
         - npm ci
     build:
       commands:
-        # MEMBERSTACK_TOKEN must be set as an Amplify environment variable.
-        # It is only read server-side (in app/api/.../route.ts) and is never
-        # bundled into client code.
+        # Amplify exposes app-level environment variables to the BUILD, but not
+        # to the Next.js SSR runtime by default. Write the server-only secret
+        # into .env.production so the compute runtime can read it at request
+        # time. This file lives only inside the server bundle (never served to
+        # the browser) and is git-ignored so it is never committed.
+        - env | grep -e MEMBERSTACK_TOKEN -e ARCHITECT_API_BASE >> .env.production || true
         - npm run build
   artifacts:
     baseDirectory: .next

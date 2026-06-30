@@ -22,8 +22,8 @@ yarn-error.log*
 
 # env files — NEVER commit secrets (Memberstack token lives here locally)
 .env
-.env*.local
-.env.local
+.env*
+!.env.example
 
 # vercel / amplify
 .vercel
