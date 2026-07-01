@@ -35,6 +35,14 @@ export default function Home() {
     setData(null);
     try {
       const res = await fetch(`/api/app/${encodeURIComponent(trimmed)}`);
+      // Session missing or expired (8h TTL) → bounce back to login instead of
+      // showing a raw "Unauthorized" error.
+      if (res.status === 401) {
+        window.location.href = `/login?next=${encodeURIComponent(
+          window.location.pathname,
+        )}`;
+        return;
+      }
       const json = await res.json();
       if (!res.ok) {
         setError(json?.error ?? `Request failed (${res.status}).`);
